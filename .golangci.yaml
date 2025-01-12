@@ -1,0 +1,8 @@
+linters:
+  enable-all: true
+  disable:
+    - depguard
+    - exhaustruct
+    - wrapcheck
+    - wsl
+    - exportloopref

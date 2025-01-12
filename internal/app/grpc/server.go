@@ -1,17 +1,18 @@
 package grpc
 
 import (
-	"google.golang.org/grpc"
 	"net"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"google.golang.org/grpc"
 )
 
 type (
 	Service interface {
-		RegisterService(grpc.ServiceRegistrar)
+		RegisterService(srv grpc.ServiceRegistrar)
 	}
 
 	Server struct {

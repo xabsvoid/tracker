@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
+
 	"github.com/xabsvoid/tracker/internal/app/grpc"
 	geov1 "github.com/xabsvoid/tracker/internal/app/grpc/geo/v1"
-	"log"
 )
 
 func main() {

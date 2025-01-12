@@ -5,6 +5,16 @@ LOCAL_BIN:=$(CURDIR)/bin
 export GO111MODULE=on
 export GOBIN:=$(LOCAL_BIN)
 
+GOLANGCI_LINT_BIN:=$(LOCAL_BIN)/golangci-lint
+GOLANGCI_LINT_VER:=1.63.4
+install-golangci-lint:
+ifeq ($(wildcard $(GOLANGCI_LINT_BIN)),)
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v$(GOLANGCI_LINT_VER)
+endif
+
+lint: install-golangci-lint
+	$(GOLANGCI_LINT_BIN) run ./...
+
 # api
 
 BUF_BIN:=$(LOCAL_BIN)/buf
