@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package geo.v1;
+
+import "type/v1/latlng.proto";
+
+service GeoService {
+  rpc Track (TrackRequest) returns (TrackResponse) {}
+}
+
+message TrackRequest {
+  string uuid = 1;
+  type.v1.LatLng latlng = 2;
+}
+
+message TrackResponse {}
