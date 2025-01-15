@@ -1,27 +1,34 @@
 package v1
 
 import (
-	"context"
-	"log"
+	"time"
 
+	"github.com/benbjohnson/clock"
+	"github.com/xabsvoid/tracker/internal/app/geo/repository"
 	geov1 "github.com/xabsvoid/tracker/pkg/api/geo/v1"
 	"google.golang.org/grpc"
 )
 
 type Service struct {
 	geov1.UnimplementedGeoServiceServer
+
+	clock        clock.Clock
+	locationRepo repository.Location
+	trackTTL     time.Duration
 }
 
-func NewService() *Service {
-	return &Service{}
+func NewService(
+	clock clock.Clock,
+	locationRepo repository.Location,
+	trackTTL time.Duration,
+) *Service {
+	return &Service{
+		clock:        clock,
+		locationRepo: locationRepo,
+		trackTTL:     trackTTL,
+	}
 }
 
 func (s *Service) RegisterService(srv grpc.ServiceRegistrar) {
 	geov1.RegisterGeoServiceServer(srv, s)
-}
-
-func (s *Service) Track(_ context.Context, req *geov1.TrackRequest) (*geov1.TrackResponse, error) {
-	log.Printf("Track: %s\n", req.String())
-
-	return &geov1.TrackResponse{}, nil
 }

@@ -19,13 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GeoService_Track_FullMethodName = "/geo.v1.GeoService/Track"
+	GeoService_LocateByUUID_FullMethodName = "/geo.v1.GeoService/LocateByUUID"
+	GeoService_Track_FullMethodName        = "/geo.v1.GeoService/Track"
 )
 
 // GeoServiceClient is the client API for GeoService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GeoServiceClient interface {
+	LocateByUUID(ctx context.Context, in *LocateByUUIDRequest, opts ...grpc.CallOption) (*LocateByUUIDResponse, error)
 	Track(ctx context.Context, in *TrackRequest, opts ...grpc.CallOption) (*TrackResponse, error)
 }
 
@@ -35,6 +37,16 @@ type geoServiceClient struct {
 
 func NewGeoServiceClient(cc grpc.ClientConnInterface) GeoServiceClient {
 	return &geoServiceClient{cc}
+}
+
+func (c *geoServiceClient) LocateByUUID(ctx context.Context, in *LocateByUUIDRequest, opts ...grpc.CallOption) (*LocateByUUIDResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LocateByUUIDResponse)
+	err := c.cc.Invoke(ctx, GeoService_LocateByUUID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *geoServiceClient) Track(ctx context.Context, in *TrackRequest, opts ...grpc.CallOption) (*TrackResponse, error) {
@@ -51,6 +63,7 @@ func (c *geoServiceClient) Track(ctx context.Context, in *TrackRequest, opts ...
 // All implementations must embed UnimplementedGeoServiceServer
 // for forward compatibility.
 type GeoServiceServer interface {
+	LocateByUUID(context.Context, *LocateByUUIDRequest) (*LocateByUUIDResponse, error)
 	Track(context.Context, *TrackRequest) (*TrackResponse, error)
 	mustEmbedUnimplementedGeoServiceServer()
 }
@@ -62,6 +75,9 @@ type GeoServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedGeoServiceServer struct{}
 
+func (UnimplementedGeoServiceServer) LocateByUUID(context.Context, *LocateByUUIDRequest) (*LocateByUUIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LocateByUUID not implemented")
+}
 func (UnimplementedGeoServiceServer) Track(context.Context, *TrackRequest) (*TrackResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Track not implemented")
 }
@@ -84,6 +100,24 @@ func RegisterGeoServiceServer(s grpc.ServiceRegistrar, srv GeoServiceServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&GeoService_ServiceDesc, srv)
+}
+
+func _GeoService_LocateByUUID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LocateByUUIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GeoServiceServer).LocateByUUID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GeoService_LocateByUUID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GeoServiceServer).LocateByUUID(ctx, req.(*LocateByUUIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _GeoService_Track_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -111,6 +145,10 @@ var GeoService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "geo.v1.GeoService",
 	HandlerType: (*GeoServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "LocateByUUID",
+			Handler:    _GeoService_LocateByUUID_Handler,
+		},
 		{
 			MethodName: "Track",
 			Handler:    _GeoService_Track_Handler,
