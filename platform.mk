@@ -5,6 +5,11 @@ LOCAL_BIN:=$(CURDIR)/bin
 export GO111MODULE=on
 export GOBIN:=$(LOCAL_BIN)
 
+test:
+	go test ./...
+
+# lint
+
 GOLANGCI_LINT_BIN:=$(LOCAL_BIN)/golangci-lint
 GOLANGCI_LINT_VER:=1.63.4
 install-golangci-lint:
@@ -14,6 +19,18 @@ endif
 
 lint: install-golangci-lint
 	$(GOLANGCI_LINT_BIN) run ./...
+
+# mock
+
+MOCKERY_BIN:=$(LOCAL_BIN)/mockery
+MOCKERY_VER:=2.51.0
+install-mockery:
+ifeq ($(wildcard $(MOCKERY_BIN)),)
+	go install github.com/vektra/mockery/v2@v$(MOCKERY_VER)
+endif
+
+mock: install-mockery
+	$(MOCKERY_BIN)
 
 # api
 
