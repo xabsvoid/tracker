@@ -7,7 +7,6 @@ import (
 	"github.com/xabsvoid/tracker/internal/app/geo/model"
 	"github.com/xabsvoid/tracker/internal/app/geo/query"
 	geov1 "github.com/xabsvoid/tracker/pkg/api/geo/v1"
-	typev1 "github.com/xabsvoid/tracker/pkg/api/type/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -32,7 +31,7 @@ func (s *Service) LocateByUUID(ctx context.Context, req *geov1.LocateByUUIDReque
 	location := handler.GetLocation()
 
 	return &geov1.LocateByUUIDResponse{
-		Latlng: &typev1.LatLng{
+		Latlng: &geov1.LatLng{
 			Latitude:  location.LatLng.Latitude,
 			Longitude: location.LatLng.Longitude,
 		},

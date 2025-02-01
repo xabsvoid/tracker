@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package geo.v1;
 
-import "type/v1/latlng.proto";
+import "geo/v1/latlng.proto";
 import "google/protobuf/timestamp.proto";
 
 service GeoService {
@@ -15,13 +15,13 @@ message LocateByUUIDRequest {
 }
 
 message LocateByUUIDResponse {
-  type.v1.LatLng latlng = 1;
+  geo.v1.LatLng latlng = 1;
   google.protobuf.Timestamp deadline = 2;
 }
 
 message TrackRequest {
   string uuid = 1;
-  type.v1.LatLng latlng = 2;
+  geo.v1.LatLng latlng = 2;
 }
 
 message TrackResponse {}
