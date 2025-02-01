@@ -2,29 +2,31 @@ package query
 
 import (
 	"context"
+	"time"
 
-	"github.com/benbjohnson/clock"
 	"github.com/xabsvoid/tracker/internal/app/geo/model"
 	"github.com/xabsvoid/tracker/internal/app/geo/repository"
 )
 
 type LocateByUUID struct {
-	clock        clock.Clock
+	// dependencies
 	locationRepo repository.Location
-	uuid         model.UUID
-
+	// request
+	uuid     model.UUID
+	deadline time.Time
+	// response
 	location model.Location
 }
 
 func NewLocateByUUID(
-	clock clock.Clock,
 	locationRepo repository.Location,
 	uuid model.UUID,
+	deadline time.Time,
 ) *LocateByUUID {
 	return &LocateByUUID{
-		clock:        clock,
 		locationRepo: locationRepo,
 		uuid:         uuid,
+		deadline:     deadline,
 	}
 }
 
@@ -38,8 +40,7 @@ func (q *LocateByUUID) Do(ctx context.Context) error {
 		return err
 	}
 
-	timeNow := q.clock.Now()
-	if !timeNow.Before(location.DeadLine) {
+	if !q.deadline.Before(location.DeadLine) {
 		return model.ErrNotFound
 	}
 

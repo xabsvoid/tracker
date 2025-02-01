@@ -26,15 +26,9 @@ func TestLocateByUUID_Do(t *testing.T) {
 
 		latLng := model.NewLatLng(1.0, 1.0)
 
-		ttl := time.Hour
+		deadline := time.Now().Add(time.Hour)
 
-		location := model.NewLocation(uuid, latLng, timeNow.Add(ttl))
-
-		mockClock := mock.NewMockClock(t)
-		mockClock.EXPECT().Now().Return(timeNow)
-		t.Cleanup(func() {
-			mockClock.AssertExpectations(t)
-		})
+		location := model.NewLocation(uuid, latLng, deadline)
 
 		mockLocationRepo := mock.NewMockLocation(t)
 		mockLocationRepo.EXPECT().GetByUUID(ctx, uuid).Return(location, nil)
@@ -42,7 +36,7 @@ func TestLocateByUUID_Do(t *testing.T) {
 			mockLocationRepo.AssertExpectations(t)
 		})
 
-		handler := NewLocateByUUID(mockClock, mockLocationRepo, uuid)
+		handler := NewLocateByUUID(mockLocationRepo, uuid, timeNow)
 		err := handler.Do(ctx)
 		require.NoError(t, err)
 		assert.Equal(t, location, handler.GetLocation())
@@ -59,7 +53,7 @@ func TestLocateByUUID_Do(t *testing.T) {
 			mockLocationRepo.AssertExpectations(t)
 		})
 
-		handler := NewLocateByUUID(nil, mockLocationRepo, uuid)
+		handler := NewLocateByUUID(mockLocationRepo, uuid, timeNow)
 		err := handler.Do(ctx)
 		require.ErrorIs(t, err, errTest)
 	})
@@ -69,15 +63,9 @@ func TestLocateByUUID_Do(t *testing.T) {
 
 		latLng := model.NewLatLng(1.0, 1.0)
 
-		ttl := time.Hour
+		deadline := timeNow.Add(-time.Hour)
 
-		location := model.NewLocation(uuid, latLng, timeNow.Add(-ttl))
-
-		mockClock := mock.NewMockClock(t)
-		mockClock.EXPECT().Now().Return(timeNow)
-		t.Cleanup(func() {
-			mockClock.AssertExpectations(t)
-		})
+		location := model.NewLocation(uuid, latLng, deadline)
 
 		mockLocationRepo := mock.NewMockLocation(t)
 		mockLocationRepo.EXPECT().GetByUUID(ctx, uuid).Return(location, nil)
@@ -85,7 +73,7 @@ func TestLocateByUUID_Do(t *testing.T) {
 			mockLocationRepo.AssertExpectations(t)
 		})
 
-		handler := NewLocateByUUID(mockClock, mockLocationRepo, uuid)
+		handler := NewLocateByUUID(mockLocationRepo, uuid, timeNow)
 		err := handler.Do(ctx)
 		require.ErrorIs(t, err, model.ErrNotFound)
 	})

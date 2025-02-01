@@ -18,7 +18,9 @@ func (s *Service) LocateByUUID(ctx context.Context, req *geov1.LocateByUUIDReque
 		return nil, status.New(codes.InvalidArgument, "uuid: "+err.Error()).Err()
 	}
 
-	handler := query.NewLocateByUUID(s.clock, s.locationRepo, uuid)
+	deadline := s.clock.Now()
+
+	handler := query.NewLocateByUUID(s.locationRepo, uuid, deadline)
 
 	if err := handler.Do(ctx); err != nil {
 		if errors.Is(err, model.ErrNotFound) {

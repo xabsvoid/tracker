@@ -4,38 +4,35 @@ import (
 	"context"
 	"time"
 
-	"github.com/benbjohnson/clock"
 	"github.com/xabsvoid/tracker/internal/app/geo/model"
 	"github.com/xabsvoid/tracker/internal/app/geo/repository"
 )
 
 type Track struct {
-	clock        clock.Clock
+	// dependencies
 	locationRepo repository.Location
-	uuid         model.UUID
-	latLng       model.LatLng
-	ttl          time.Duration
+	// request
+	uuid     model.UUID
+	latLng   model.LatLng
+	deadline time.Time
 }
 
 func NewTrack(
-	clock clock.Clock,
 	locationRepo repository.Location,
 	uuid model.UUID,
 	latLng model.LatLng,
-	ttl time.Duration,
+	deadline time.Time,
 ) *Track {
 	return &Track{
-		clock:        clock,
 		locationRepo: locationRepo,
 		uuid:         uuid,
 		latLng:       latLng,
-		ttl:          ttl,
+		deadline:     deadline,
 	}
 }
 
 func (c *Track) Do(ctx context.Context) error {
-	deadline := c.clock.Now().Add(c.ttl)
-	location := model.NewLocation(c.uuid, c.latLng, deadline)
+	location := model.NewLocation(c.uuid, c.latLng, c.deadline)
 
 	return c.locationRepo.Set(ctx, location)
 }

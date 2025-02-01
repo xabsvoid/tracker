@@ -19,7 +19,9 @@ func (s *Service) Track(ctx context.Context, req *geov1.TrackRequest) (*geov1.Tr
 	latLngReq := req.GetLatlng()
 	latLng := model.NewLatLng(latLngReq.GetLatitude(), latLngReq.GetLongitude())
 
-	handler := command.NewTrack(s.clock, s.locationRepo, uuid, latLng, s.trackTTL)
+	deadline := s.clock.Now().Add(s.trackTTL)
+
+	handler := command.NewTrack(s.locationRepo, uuid, latLng, deadline)
 
 	if err := handler.Do(ctx); err != nil {
 		return nil, status.New(codes.Internal, err.Error()).Err()
