@@ -8,5 +8,5 @@ import (
 
 type Location interface {
 	GetByUUID(ctx context.Context, uuid model.UUID) (model.Location, error)
-	Set(ctx context.Context, loc model.Location) error
+	Set(ctx context.Context, location model.Location) error
 }

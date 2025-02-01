@@ -37,7 +37,8 @@ func (r *Location) Set(_ context.Context, location model.Location) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
-	if len(r.locationMap) >= r.limit {
+	_, ok := r.locationMap[string(location.UUID)]
+	if !ok && len(r.locationMap) >= r.limit {
 		return model.ErrOverflow
 	}
 

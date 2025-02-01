@@ -79,9 +79,9 @@ func (_c *MockLocation_GetByUUID_Call) RunAndReturn(run func(context.Context, mo
 	return _c
 }
 
-// Set provides a mock function with given fields: ctx, loc
-func (_m *MockLocation) Set(ctx context.Context, loc model.Location) error {
-	ret := _m.Called(ctx, loc)
+// Set provides a mock function with given fields: ctx, location
+func (_m *MockLocation) Set(ctx context.Context, location model.Location) error {
+	ret := _m.Called(ctx, location)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Set")
@@ -89,7 +89,7 @@ func (_m *MockLocation) Set(ctx context.Context, loc model.Location) error {
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, model.Location) error); ok {
-		r0 = rf(ctx, loc)
+		r0 = rf(ctx, location)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -104,12 +104,12 @@ type MockLocation_Set_Call struct {
 
 // Set is a helper method to define mock.On call
 //   - ctx context.Context
-//   - loc model.Location
-func (_e *MockLocation_Expecter) Set(ctx interface{}, loc interface{}) *MockLocation_Set_Call {
-	return &MockLocation_Set_Call{Call: _e.mock.On("Set", ctx, loc)}
+//   - location model.Location
+func (_e *MockLocation_Expecter) Set(ctx interface{}, location interface{}) *MockLocation_Set_Call {
+	return &MockLocation_Set_Call{Call: _e.mock.On("Set", ctx, location)}
 }
 
-func (_c *MockLocation_Set_Call) Run(run func(ctx context.Context, loc model.Location)) *MockLocation_Set_Call {
+func (_c *MockLocation_Set_Call) Run(run func(ctx context.Context, location model.Location)) *MockLocation_Set_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(model.Location))
 	})
